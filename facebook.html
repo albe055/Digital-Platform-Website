@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facebook Growth – Digital Dynamo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:      #0D1B2A;
+      --gold:      #C9A84C;
+      --gold-lt:   #E8C97A;
+      --white:     #FFFFFF;
+      --accent:    #1877F2;
+      --accent-lt: #4da3ff;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 6%;
+      background: rgba(13,27,42,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.12);
+    }
+    .logo { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:900; color:var(--gold); text-decoration:none; }
+    .logo span { color:var(--white); }
+    .nav-right { display:flex; align-items:center; gap:1.5rem; }
+    .breadcrumb { display:flex; align-items:center; gap:0.4rem; font-size:0.82rem; color:rgba(255,255,255,0.4); }
+    .breadcrumb a { color:rgba(255,255,255,0.4); text-decoration:none; transition:color 0.2s; }
+    .breadcrumb a:hover { color:var(--gold); }
+    .breadcrumb span { color:rgba(255,255,255,0.2); }
+    .breadcrumb .current { color:var(--white); font-weight:600; }
+
+    /* BG CANVAS */
+    #bg-canvas { position:fixed; inset:0; z-index:0; width:100%; height:100%; pointer-events:none; }
+
+    /* HERO BAND */
+    .platform-hero {
+      position:relative; z-index:1;
+      padding: 7rem 6% 4rem;
+      display:flex; align-items:center; gap:2rem; flex-wrap:wrap;
+    }
+    .platform-badge {
+      display:flex; align-items:center; gap:1rem;
+      background:rgba(24,119,242,0.1);
+      border:1px solid rgba(24,119,242,0.25);
+      border-radius:14px; padding:1.2rem 1.8rem;
+      flex-shrink:0;
+    }
+    .platform-badge .p-icon { font-size:2.8rem; }
+    .platform-badge .p-label {
+      font-family:'Playfair Display',serif;
+      font-size:1.6rem; font-weight:900; color:var(--white);
+    }
+    .platform-badge .p-sub { font-size:0.8rem; color:rgba(255,255,255,0.4); margin-top:0.2rem; }
+    .hero-text h1 {
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.8rem,3.5vw,2.8rem); font-weight:900; line-height:1.15;
+    }
+    .hero-text h1 em {
+      font-style:normal;
+      background:linear-gradient(135deg,#1877F2,#4da3ff);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .hero-text p { margin-top:0.8rem; font-size:0.95rem; color:rgba(255,255,255,0.5); max-width:480px; line-height:1.7; }
+
+    /* STEPS */
+    .steps-bar {
+      position:relative; z-index:1;
+      display:flex; align-items:center; gap:0.5rem;
+      padding:0 6% 2.5rem;
+    }
+    .step { display:flex; align-items:center; gap:0.4rem; font-size:0.8rem; }
+    .step-dot { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; }
+    .step.done .step-dot { background:rgba(201,168,76,0.3); color:var(--gold); }
+    .step.active .step-dot { background:var(--gold); color:var(--navy); }
+    .step.inactive .step-dot { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.3); }
+    .step.active .step-label { color:var(--white); font-weight:600; }
+    .step-label { color:rgba(255,255,255,0.3); }
+    .step-line { width:36px; height:1px; }
+    .step-line.done { background:rgba(201,168,76,0.4); }
+    .step-line.inactive { background:rgba(255,255,255,0.08); }
+
+    /* SERVICES GRID */
+    .services-section {
+      position:relative; z-index:1;
+      padding:0 6% 6rem;
+    }
+    .section-label {
+      font-size:0.78rem; font-weight:600; letter-spacing:0.14em;
+      text-transform:uppercase; color:var(--gold); margin-bottom:1.5rem;
+    }
+    .services-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:1.4rem; max-width:1100px;
+    }
+
+    .service-card {
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.07);
+      border-radius:14px; padding:2rem;
+      cursor:pointer; transition:all 0.25s;
+      position:relative; overflow:hidden;
+    }
+    .service-card::after {
+      content:'';
+      position:absolute; bottom:0; left:0; right:0; height:3px;
+      background:linear-gradient(90deg,#1877F2,#4da3ff);
+      transform:scaleX(0); transition:transform 0.3s;
+      transform-origin:left;
+    }
+    .service-card:hover {
+      border-color:rgba(24,119,242,0.4);
+      background:rgba(24,119,242,0.06);
+      transform:translateY(-5px);
+      box-shadow:0 16px 48px rgba(24,119,242,0.1);
+    }
+    .service-card:hover::after { transform:scaleX(1); }
+
+    .card-num {
+      font-family:'Playfair Display',serif;
+      font-size:0.72rem; color:rgba(201,168,76,0.5);
+      font-weight:700; letter-spacing:0.1em; margin-bottom:1rem;
+    }
+    .card-icon {
+      font-size:2.2rem; margin-bottom:1rem;
+      display:block;
+    }
+    .card-title {
+      font-family:'Playfair Display',serif;
+      font-size:1.2rem; font-weight:700; margin-bottom:0.6rem;
+    }
+    .card-desc { font-size:0.88rem; color:rgba(255,255,255,0.5); line-height:1.65; }
+    .card-cta {
+      margin-top:1.4rem; display:inline-flex; align-items:center; gap:0.4rem;
+      font-size:0.82rem; font-weight:600; color:#4da3ff;
+      text-decoration:none; transition:gap 0.2s;
+    }
+    .service-card:hover .card-cta { gap:0.7rem; }
+
+    /* ORDER MODAL */
+    .modal-overlay {
+      display:none; position:fixed; inset:0; z-index:200;
+      background:rgba(0,0,0,0.7); backdrop-filter:blur(6px);
+      align-items:center; justify-content:center; padding:1rem;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:#0f2035;
+      border:1px solid rgba(24,119,242,0.25);
+      border-radius:16px; padding:2.5rem;
+      max-width:500px; width:100%;
+      position:relative;
+      animation:slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .modal-close {
+      position:absolute; top:1rem; right:1rem;
+      background:rgba(255,255,255,0.08); border:none;
+      color:var(--white); width:32px; height:32px; border-radius:50%;
+      font-size:1rem; cursor:pointer; transition:background 0.2s;
+    }
+    .modal-close:hover { background:rgba(255,255,255,0.15); }
+    .modal-icon { font-size:2.5rem; margin-bottom:0.8rem; }
+    .modal-title {
+      font-family:'Playfair Display',serif;
+      font-size:1.5rem; font-weight:700; margin-bottom:0.5rem;
+    }
+    .modal-sub { font-size:0.9rem; color:rgba(255,255,255,0.5); margin-bottom:1.8rem; line-height:1.6; }
+    .modal-form .mf-group { margin-bottom:1.1rem; }
+    .modal-form label { display:block; font-size:0.78rem; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-bottom:0.4rem; }
+    .modal-form input, .modal-form select {
+      width:100%; padding:0.75rem 1rem;
+      background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px; color:var(--white); font-family:'Inter',sans-serif; font-size:0.92rem; outline:none;
+      transition:border-color 0.2s;
+    }
+    .modal-form input:focus, .modal-form select:focus { border-color:#1877F2; }
+    .modal-form select option { background:#0D1B2A; }
+    .modal-submit {
+      width:100%; padding:0.9rem; background:linear-gradient(135deg,#1877F2,#0d5bbf);
+      border:none; border-radius:8px; color:var(--white);
+      font-size:0.95rem; font-weight:700; cursor:pointer; transition:opacity 0.2s;
+      margin-top:0.5rem;
+    }
+    .modal-submit:hover { opacity:0.9; }
+
+    footer { position:relative; z-index:1; text-align:center; padding:2rem 6%; border-top:1px solid rgba(255,255,255,0.06); font-size:0.8rem; color:rgba(255,255,255,0.25); }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <a href="digital-dynamo.html" class="logo">Digital<span>Dynamo</span></a>
+  <div class="nav-right">
+    <div class="breadcrumb">
+      <a href="digital-dynamo.html">Home</a>
+      <span>/</span>
+      <a href="platforms.html">Platforms</a>
+      <span>/</span>
+      <span class="current">Facebook</span>
+    </div>
+  </div>
+</nav>
+
+<!-- STEP BAR -->
+<div class="steps-bar" style="padding-top:6rem;">
+  <div class="step done"><div class="step-dot">✓</div><div class="step-label">Platform</div></div>
+  <div class="step-line done"></div>
+  <div class="step active"><div class="step-dot">2</div><div class="step-label">Select Service</div></div>
+  <div class="step-line inactive"></div>
+  <div class="step inactive"><div class="step-dot">3</div><div class="step-label">Get Started</div></div>
+</div>
+
+<!-- HERO BAND -->
+<div class="platform-hero" style="padding-top:0;">
+  <div class="platform-badge">
+    <span class="p-icon">📘</span>
+    <div>
+      <div class="p-label">Facebook</div>
+      <div class="p-sub">4 Growth Services Available</div>
+    </div>
+  </div>
+  <div class="hero-text">
+    <h1>Supercharge Your<br/><em>Facebook Growth</em></h1>
+    <p>Pick a service below and let Digital Dynamo's experts take your Facebook presence to the next level — organically and sustainably.</p>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<div class="services-section">
+  <div class="section-label">Choose Your Growth Service</div>
+  <div class="services-grid">
+
+    <div class="service-card" onclick="openModal('Grow Facebook Followers','Build a real, engaged following on your Facebook profile or page with our targeted organic growth strategy.','👥')">
+      <div class="card-num">SERVICE 01</div>
+      <span class="card-icon">👥</span>
+      <div class="card-title">Grow Facebook Followers</div>
+      <div class="card-desc">Build a genuine, engaged audience on your Facebook profile or page with our proven organic growth methods.</div>
+      <div class="card-cta">Get Started →</div>
+    </div>
+
+    <div class="service-card" onclick="openModal('Grow Page Likes','Increase the number of real users who like and follow your Facebook page for better reach and credibility.','❤️')">
+      <div class="card-num">SERVICE 02</div>
+      <span class="card-icon">❤️</span>
+      <div class="card-title">Grow Page Likes</div>
+      <div class="card-desc">Increase the number of real people who like and follow your page, boosting your credibility and organic reach.</div>
+      <div class="card-cta">Get Started →</div>
+    </div>
+
+    <div class="service-card" onclick="openModal('Grow Reels Views','Get more eyes on your Facebook Reels through strategic promotion, timing, and hashtag optimization.','🎬')">
+      <div class="card-num">SERVICE 03</div>
+      <span class="card-icon">🎬</span>
+      <div class="card-title">Grow Reels Views</div>
+      <div class="card-desc">Amplify your Facebook Reels with targeted promotion strategies that drive real views and expand your reach fast.</div>
+      <div class="card-cta">Get Started →</div>
+    </div>
+
+    <div class="service-card" onclick="openModal('Grow Organic Reactions','Boost authentic reactions (likes, loves, wows) on your posts through engagement-optimized content strategies.','🔥')">
+      <div class="card-num">SERVICE 04</div>
+      <span class="card-icon">🔥</span>
+      <div class="card-title">Grow Organic Reactions</div>
+      <div class="card-desc">Drive authentic likes, loves, and wows on your posts through our engagement-optimized content and posting strategy.</div>
+      <div class="card-cta">Get Started →</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-icon" id="m-icon">👥</div>
+    <div class="modal-title" id="m-title">Grow Facebook Followers</div>
+    <div class="modal-sub" id="m-sub">Fill in your details and we'll get in touch within 24 hours.</div>
+    <div class="modal-form">
+      <div class="mf-group"><label>Your Name</label><input type="text" placeholder="John Smith"/></div>
+      <div class="mf-group"><label>Email Address</label><input type="email" placeholder="you@email.com"/></div>
+      <div class="mf-group"><label>Facebook Page / Profile URL</label><input type="text" placeholder="https://facebook.com/yourpage"/></div>
+      <div class="mf-group">
+        <label>Target Growth</label>
+        <select>
+          <option>1,000 – 5,000</option>
+          <option>5,000 – 10,000</option>
+          <option>10,000 – 50,000</option>
+          <option>50,000+</option>
+        </select>
+      </div>
+      <button class="modal-submit">🚀 Submit My Request</button>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Digital Dynamo · <a href="platforms.html" style="color:var(--gold);text-decoration:none;">← Back to Platforms</a></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+function openModal(title,sub,icon){
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-sub').textContent=sub+' Fill in your details and we\'ll be in touch within 24 hours.';
+  document.getElementById('m-icon').textContent=icon;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+(function(){
+  const canvas=document.getElementById('bg-canvas');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+  renderer.setClearColor(0x0D1B2A,1);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,200);
+  camera.position.z=28;
+  function resize(){ renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); }
+  resize(); window.addEventListener('resize',resize);
+  const blue=new THREE.Color(0x1877F2), gold=new THREE.Color(0xC9A84C);
+  const N=500, pos=new Float32Array(N*3), col=new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    const th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),r=12+Math.random()*18;
+    pos[i*3]=r*Math.sin(ph)*Math.cos(th); pos[i*3+1]=r*Math.sin(ph)*Math.sin(th); pos[i*3+2]=r*Math.cos(ph)-5;
+    const c=Math.random()>0.6?blue:gold; col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b;
+  }
+  const pg=new THREE.BufferGeometry();
+  pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  pg.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const pts=new THREE.Points(pg,new THREE.PointsMaterial({size:0.1,vertexColors:true,transparent:true,opacity:0.45}));
+  scene.add(pts);
+  [9,14].forEach((r,i)=>{
+    const m=new THREE.Mesh(new THREE.TorusGeometry(r,0.04,16,100),new THREE.MeshBasicMaterial({color:blue,transparent:true,opacity:0.08-i*0.02}));
+    m.rotation.x=0.9+i*0.3; scene.add(m);
+  });
+  const clock=new THREE.Clock();
+  (function animate(){ requestAnimationFrame(animate); pts.rotation.y=clock.getElapsedTime()*0.025; renderer.render(scene,camera); })();
+})();
+</script>
+</body>
+</html>
